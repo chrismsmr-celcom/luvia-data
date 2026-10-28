@@ -1,0 +1,190 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Luvia Data</title><link rel="icon" href="logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{--bg:#f3f6fc;--card:#fff;--tx:#0e1a33;--mu:#62718f;--bd:#e0e7f3;--br:#0b4db3;--ok:#16a34a;--ko:#dc2626;--sh:0 1px 2px rgba(11,77,179,.06),0 10px 30px rgba(11,77,179,.06)}
+[data-theme=dark]{--bg:#091226;--card:#10192f;--tx:#e8eefb;--mu:#8d9bbb;--bd:#223256;--br:#4f8cff;--sh:none}
+*{box-sizing:border-box;margin:0}[hidden]{display:none!important}
+body{font:14px/1.5 'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx)}
+.app{display:flex}
+aside{width:248px;flex:none;height:100vh;position:sticky;top:0;background:var(--card);border-right:1px solid var(--bd);padding:16px 12px;display:flex;flex-direction:column;gap:6px;transition:width .25s;overflow:hidden;z-index:5}
+body.col aside{width:76px}body.col .t{display:none}
+.brand{display:flex;align-items:center;gap:10px;padding:2px 6px 16px;font-weight:800;font-size:18px;white-space:nowrap}
+.lg{width:44px;height:44px;object-fit:contain;flex:none}[data-theme=dark] .lg{filter:brightness(0) invert(1)}
+.nav{display:flex;align-items:center;gap:12px;padding:10px 14px;border:0;background:none;color:var(--mu);border-radius:12px;font:inherit;font-weight:600;cursor:pointer;white-space:nowrap;width:100%}
+.nav:hover{background:var(--bg);color:var(--tx)}.nav.on{background:var(--br);color:#fff}
+.nav svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+main{flex:1;min-width:0}
+header{position:sticky;top:0;z-index:4;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 24px;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd)}
+h1{font-size:21px;font-weight:800;margin-right:auto}
+.btn,input,select{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:7px 11px}
+.btn{cursor:pointer;font-weight:600}.btn:hover:not(:disabled){border-color:var(--br)}.btn:disabled{opacity:.4}
+.pri{background:var(--br);color:#fff;border-color:var(--br)}
+#v{padding:24px;display:grid;gap:18px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px;box-shadow:var(--sh)}
+.card h3{font-size:14px;margin-bottom:12px}
+.kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.k span{color:var(--mu);font-size:12px;font-weight:600}.k b{display:block;font-size:26px;font-weight:800;margin:2px 0;letter-spacing:-.5px}
+.up{color:var(--ok)}.down{color:var(--ko)}small{font-size:12px;color:var(--mu)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.cv{position:relative}.tw{max-height:420px;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{position:sticky;top:0;background:var(--card);text-align:left;color:var(--mu);font-size:12px;text-transform:capitalize}
+th,td{padding:9px 10px;border-bottom:1px solid var(--bd);white-space:nowrap}
+#map{height:420px;border-radius:12px;z-index:1}.ld{padding:60px;text-align:center;color:var(--mu)}
+#demo{background:#f59e0b22;color:#b45309;border:1px solid #f59e0b66;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700}
+#lgn{position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:linear-gradient(135deg,#0b4db3,#071b44)}
+#lgn .card{width:340px;text-align:center;display:grid;gap:12px}
+[data-theme=dark] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.95) contrast(.9)}
+@media(max-width:900px){.g2{grid-template-columns:1fr}header{padding:10px 14px}#v{padding:14px}}
+</style></head><body>
+<div id=lgn><form class=card id=lf><img class=lg src=logo.png alt="" style="width:96px;height:96px;margin:auto"><h2>Luvia Data</h2><small>Accès réservé à l’équipe Luvia</small><input id=cd placeholder="Code d’accès" autocomplete=off><button class="btn pri">Entrer</button><small id=er class=down></small></form></div>
+<div class=app><aside><div class=brand><img class=lg src=logo.png alt=""><span class=t>Luvia Data</span></div><nav id=nv></nav></aside>
+<main><header><button class=btn id=tg title="Réduire le menu">☰</button><h1 id=ttl></h1><span id=demo hidden>Mode démo</span>
+<select id=pr><option value=7>7 jours</option><option value=30 selected>30 jours</option><option value=90>90 jours</option><option value=365>12 mois</option></select>
+<input type=date id=f><input type=date id=t><select id=sb><option value=false>Production</option><option value=true>Sandbox</option></select>
+<button class=btn id=th></button><button class=btn data-x=json>JSON</button><button class=btn data-x=csv>CSV</button><button class="btn pri" data-x=pdf>PDF</button></header><div id=v></div></main></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script>
+const $=s=>document.querySelector(s),N=x=>+x||0,fx=(n,d=0)=>N(n).toLocaleString('fr-FR',{maximumFractionDigits:d,minimumFractionDigits:d}),
+mo=(n,c='EUR')=>new Intl.NumberFormat('fr-FR',{style:'currency',currency:c||'EUR',maximumFractionDigits:0}).format(N(n)),
+iso=d=>d.toISOString().slice(0,10),un=x=>{for(let i=0;i<2&&x&&!Array.isArray(x)&&x.data!==undefined;i++)x=x.data;return x},
+nm=c=>{try{return new Intl.DisplayNames(['fr'],{type:'region'}).of(c)}catch{return c}},
+pc=p=>p==null?'':`<small class="${p>=0?'up':'down'}">${p>=0?'▲':'▼'} ${fx(Math.abs(p),1)} % vs période précédente</small>`,
+B=()=>({from:$('#f').value,to:$('#t').value}),qs=()=>`from=${$('#f').value}&to=${$('#t').value}&sandbox=${$('#sb').value}`,
+ls=(k,v)=>{try{return v===undefined?localStorage[k]:localStorage[k]=v}catch{}};
+const S={page:'overview',code:'',demo:false,q:''};let cur={},map,CC;
+const CODE='LUV-7858';
+
+/* ---------- API (proxy Vercel /api/liteapi, repli démo) ---------- */
+async function api(path,body){
+ try{const r=await fetch('/api/liteapi?path='+encodeURIComponent(path),{method:body?'POST':'GET',headers:{'Content-Type':'application/json','x-access':S.code},body:body?JSON.stringify(body):undefined});
+  if(!r.ok)throw new Error(r.status);const j=await r.json();if(j.error)throw new Error(j.error);return j}
+ catch(e){console.warn('API indisponible → démo',path,e.message);S.demo=true;return mock(path,body)}}
+
+/* ---------- Briques UI ---------- */
+const kg=k=>(cur.kpis=k.map(x=>x.slice(0,2)),`<div class=kg>${k.map(x=>`<div class="card k"><span>${x[0]}</span><b>${x[1]}</b>${x[2]||''}</div>`).join('')}</div>`),
+cd=(t,id,h=280)=>`<div class=card><h3>${t}</h3><div class=cv style="height:${h}px"><canvas id=${id}></canvas></div></div>`,
+tb=(rows,t='Détail')=>{cur.rows=rows;const k=Object.keys(rows[0]||{});return`<div class=card><h3>${t}</h3><div class=tw><table><thead><tr>${k.map(x=>`<th>${x.replace(/_/g,' ')}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${k.map(x=>`<td>${typeof r[x]==='number'?fx(r[x],Number.isInteger(r[x])?0:2):r[x]??''}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`};
+const PAL=['#3b82f6','#06b6d4','#f59e0b','#10b981','#a78bfa'];
+Chart.register({id:'bg',afterDraw(c){if(window.__bg){const x=c.ctx;x.save();x.globalCompositeOperation='destination-over';x.fillStyle=window.__bg;x.fillRect(0,0,c.width,c.height);x.restore()}}});
+function ch(id,ti,type,lb,ds,o={}){cur.charts.push([id,ti]);ds.forEach((d,i)=>{d.backgroundColor??=PAL[i%5];d.borderColor??=PAL[i%5]});
+ new Chart(document.getElementById(id),{type,data:{labels:lb,datasets:ds},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},elements:{point:{radius:0},line:{tension:.3}},plugins:{legend:{display:ds.length>1,position:'bottom'}},scales:{y:{beginAtZero:true,grid:{color:'rgba(128,128,128,.18)'}},x:{grid:{display:false}}},...o}})}
+async function draw(rows){
+ CC??=await fetch('https://restcountries.com/v3.1/all?fields=cca2,latlng').then(r=>r.json()).then(a=>Object.fromEntries(a.map(c=>[c.cca2,c.latlng]))).catch(()=>({}));
+ map?.remove();map=L.map('map',{scrollWheelZoom:false}).setView([25,10],2);
+ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
+ const m=Math.max(...rows.map(r=>r.ventes_usd),1);
+ rows.forEach(r=>{const p=CC[r.code];p&&L.circleMarker(p,{radius:6+24*Math.sqrt(r.ventes_usd/m),color:'#0b4db3',fillColor:'#3b82f6',fillOpacity:.55,weight:1.5}).addTo(map).bindPopup(`<b>${r.pays}</b><br>${fx(r.ventes_usd)} USD · ${r.réservations} réservations`)})}
+const geo=(path,key,t)=>async el=>{
+ const j=await api(path+'?'+qs()),D=Array.isArray(j.data)?j.data:un(j)||[],s=j.summary||{},
+ rows=D.map(x=>{const c=x.current_period||{};return{code:x[key],pays:nm(x[key]),réservations:N(c.booking_count),hôtels:N(c.hotel_count),ventes_usd:N(c.total_sales_usd),panier_moyen_usd:N(c.avg_booking_value_usd),évolution_pct:N(x.change?.sales_change_percent)}}).sort((a,b)=>b.ventes_usd-a.ventes_usd),
+ tot=rows.reduce((a,r)=>a+r.ventes_usd,0),top=rows.slice(0,10);
+ el.innerHTML=kg([['Ventes (USD)',mo(s.current_period_total_sales_usd??tot,'USD'),pc(s.total_sales_change_percent)],['Pays',fx(s.total_countries??rows.length)],['Réservations',fx(rows.reduce((a,r)=>a+r.réservations,0))],['N° 1',top[0]?.pays||'–']])+`<div class=card><h3>Carte des ${t}</h3><div id=map></div></div>`+cd('Top 10 par ventes (USD)','c1',320)+tb(rows,'Détail par pays');
+ ch('c1','Top 10 par ventes (USD)','bar',top.map(r=>r.pays),[{label:'Ventes USD',data:top.map(r=>r.ventes_usd),borderRadius:6}]);
+ await draw(rows)};
+
+/* ---------- Pages ---------- */
+const P={
+overview:{t:'Vue d’ensemble',i:'M3 12l9-9 9 9M5 10v10h14V10',async fn(el){
+ const [r,w]=await Promise.all([api('/analytics/report',B()),api('/analytics/weekly',B())]),d=un(r)||{},wk=un(w)?.arr||[],by={};
+ [['sales','sales','ventes'],['commission','commission','commission'],['revenue','revenue','revenu'],['bookings','booking','réservations'],['cancelled_booking','cancelled_booking','annulations']].forEach(([a,k,f])=>(d[a]||[]).forEach(x=>{const t=x.date.slice(0,10);(by[t]??={date:t,ventes:0,commission:0,revenu:0,réservations:0,annulations:0})[f]=N(x[k])}));
+ const rows=Object.values(by).sort((a,b)=>a.date<b.date?-1:1),sm=k=>rows.reduce((s,r)=>s+r[k],0),c=d.sales?.[0]?.currency||'EUR',L=rows.map(r=>r.date.slice(5)),nb=sm('réservations'),an=sm('annulations');
+ el.innerHTML=kg([['Ventes',mo(sm('ventes'),c)],['Commissions',mo(sm('commission'),c)],['Revenu',mo(sm('revenu'),c)],['Réservations',fx(nb),`<small>${fx(nb?an/nb*100:0,1)} % d’annulation</small>`]])+`<div class=g2>`+cd('Ventes et commissions par jour','c1')+cd('Réservations par jour','c2')+`</div>`+cd('Ventes par semaine','c3')+tb(rows,'Détail journalier');
+ ch('c1','Ventes et commissions par jour','line',L,[{label:'Ventes',data:rows.map(r=>r.ventes),fill:true,backgroundColor:'rgba(59,130,246,.15)'},{label:'Commissions',data:rows.map(r=>r.commission)}]);
+ ch('c2','Réservations par jour','bar',L,[{label:'Réservations',data:rows.map(r=>r.réservations),borderRadius:4}]);
+ ch('c3','Ventes par semaine','bar',wk.map(x=>x.weeks),[{label:'Ventes',data:wk.map(x=>x.sales),borderRadius:6}])}},
+hotels:{t:'Hôtels',i:'M3 21V7l9-4 9 4v14M9 21v-6h6v6',async fn(el){
+ const a=un(await api('/analytics/hotels',B()))||[],rows=a.map((h,i)=>({rang:i+1,hôtel:h.name,ville:h.city,pays:h.country,réservations:N(h.total),ventes:N(h.sales),devise:h.currency})),t=rows.slice(0,10),sm=k=>rows.reduce((s,r)=>s+r[k],0);
+ el.innerHTML=kg([['Hôtels classés',fx(rows.length)],['Réservations',fx(sm('réservations'))],['Ventes',mo(sm('ventes'),rows[0]?.devise)]])+`<div class=g2>`+cd('Top 10 – réservations','c1',340)+cd('Top 10 – ventes','c2',340)+`</div>`+tb(rows,'Classement des hôtels');
+ ch('c1','Top 10 – réservations','bar',t.map(r=>r.hôtel),[{label:'Réservations',data:t.map(r=>r.réservations),borderRadius:4}],{indexAxis:'y'});
+ ch('c2','Top 10 – ventes','bar',t.map(r=>r.hôtel),[{label:'Ventes',data:t.map(r=>r.ventes),borderRadius:4}],{indexAxis:'y'})}},
+markets:{t:'Marchés émetteurs',i:'M12 3a9 9 0 100 18 9 9 0 000-18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',fn:geo('/bookings/guest-nationality-report','nationality','nationalités clients')},
+dest:{t:'Destinations',i:'M12 21s7-6 7-11a7 7 0 10-14 0c0 5 7 11 7 11zM12 12a2 2 0 100-4 2 2 0 000 4',fn:geo('/bookings/source-markets-report','country','destinations')},
+profit:{t:'Rentabilité',i:'M12 3a9 9 0 100 18 9 9 0 000-18zM12 7v10M15 9.5c0-1-1.5-1.5-3-1.5s-3 .7-3 2 1.5 1.7 3 2 3 .7 3 2-1.5 2-3 2-3-.5-3-1.5',async fn(el){
+ const j=await api('/bookings/hotels-sales-report?'+qs()+'&limit=100'),D=Array.isArray(j.data)?j.data:un(j)||[],
+ rows=D.map(x=>{const c=x.current_period||x;return{hôtel:x.hotel_name||x.name||x.hotel_id,ventes_usd:N(c.total_sales_usd),coût_usd:N(c.total_buying_price_usd),profit_usd:N(c.total_profit_usd),marge_pct:N(c.profit_margin_percent),évolution_pct:N(x.change?.sales_change_percent)}}).sort((a,b)=>b.profit_usd-a.profit_usd),
+ sm=k=>rows.reduce((s,r)=>s+r[k],0),top=rows.slice(0,10);
+ el.innerHTML=kg([['Ventes',mo(sm('ventes_usd'),'USD')],['Profit',mo(sm('profit_usd'),'USD')],['Marge moyenne',fx(sm('ventes_usd')?sm('profit_usd')/sm('ventes_usd')*100:0,1)+' %'],['Établissements',fx(rows.length)]])+cd('Top 10 – ventes et profit (USD)','c1',340)+tb(rows,'Performance par établissement');
+ ch('c1','Top 10 – ventes et profit (USD)','bar',top.map(r=>r.hôtel),[{label:'Ventes',data:top.map(r=>r.ventes_usd),borderRadius:4},{label:'Profit',data:top.map(r=>r.profit_usd),borderRadius:4}])}},
+comm:{t:'Commissions',i:'M19 5L5 19M7 9a2 2 0 100-4 2 2 0 000 4zM17 19a2 2 0 100-4 2 2 0 000 4z',async fn(el){
+ const a=un(await api('/commissions/report',{...B(),sandbox:$('#sb').value}))||[],rows=a.map(x=>({date:x.date,montant:N(x.amount),pourcentage:N(x.percentage)})),tot=rows.reduce((s,r)=>s+r.montant,0),best=rows.reduce((m,r)=>r.montant>(m?.montant||0)?r:m,null);
+ el.innerHTML=kg([['Commissions',fx(tot)],['Taux moyen',fx(rows.length?rows.reduce((s,r)=>s+r.pourcentage,0)/rows.length:0,2)+' %'],['Meilleur jour',best?fx(best.montant):'–',`<small>${best?.date||''}</small>`]])+cd('Montant quotidien et taux moyen','c1',320)+tb(rows,'Détail journalier');
+ ch('c1','Montant quotidien et taux moyen','bar',rows.map(r=>r.date.slice(5)),[{label:'Montant',data:rows.map(r=>r.montant),borderRadius:4,yAxisID:'y'},{type:'line',label:'Taux %',data:rows.map(r=>r.pourcentage),yAxisID:'y1',borderColor:'#f59e0b',backgroundColor:'#f59e0b'}],{scales:{x:{grid:{display:false}},y:{beginAtZero:true,grid:{color:'rgba(128,128,128,.18)'}},y1:{position:'right',grid:{drawOnChartArea:false}}}})}},
+book:{t:'Réservations',i:'M11 19a8 8 0 100-16 8 8 0 000 16zM21 21l-4.3-4.3',async fn(el){
+ el.innerHTML=`<div class=card><form id=sf style="display:flex;gap:10px"><input id=q placeholder="Nom du client, hôtel ou numéro de réservation" style="flex:1" value="${S.q}"><button class="btn pri">Rechercher</button></form></div><div id=bb></div>`;
+ const run=async(pg=0)=>{S.q=$('#q').value.trim();cur.kpis=[];cur.rows=[];
+  if(!S.q){$('#bb').innerHTML='<div class=ld>Saisissez un nom, un hôtel ou un numéro pour lancer la recherche.</div>';return}
+  const a=un(await api('/bookings/search',{query:S.q,page:pg,rowsPerPage:20,sand_box:$('#sb').value}))||[],
+  rows=a.map(x=>({réservation:x.booking_id,client:`${x.first_name||''} ${x.last_name||''}`.trim(),hôtel:x.hotel_name,créée_le:(x.created_at||'').slice(0,10),facturé_usd:x.credit_line_billing?.amount_usd??''}));
+  $('#bb').innerHTML=tb(rows,`Résultats – page ${pg+1}`)+`<div style="display:flex;gap:10px;justify-content:center;margin-top:14px"><button class=btn id=pv ${pg?'':'disabled'}>← Précédent</button><button class=btn id=nx ${a.length<20?'disabled':''}>Suivant →</button></div>`;
+  $('#pv').onclick=()=>run(pg-1);$('#nx').onclick=()=>run(pg+1);$('#demo').hidden=!S.demo};
+ $('#sf').onsubmit=e=>{e.preventDefault();run()};await run()}}};
+
+async function go(){const el=$('#v');Object.values(Chart.instances).forEach(c=>c.destroy());el.innerHTML='<div class=ld>Chargement…</div>';cur={charts:[]};S.demo=false;
+ document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('on',b.dataset.p==S.page));$('#ttl').textContent=P[S.page].t;
+ try{await P[S.page].fn(el)}catch(e){console.error(e);el.innerHTML=`<div class=card>Erreur : ${e.message}</div>`}
+ $('#demo').hidden=!S.demo}
+
+/* ---------- Exports ---------- */
+const dl=(n,t,m)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:m}));a.download=n;a.click()},pf=v=>String(v??'').replace(/[\u202f\u00a0]/g,' ');
+function ex(f){const b=`luvia-data-${S.page}-${$('#f').value}_${$('#t').value}`,r=cur.rows||[];
+ if(f=='json')dl(b+'.json',JSON.stringify({page:P[S.page].t,periode:B(),kpis:cur.kpis,données:r},null,2),'application/json');
+ if(f=='csv'){const k=Object.keys(r[0]||{}),e=v=>`"${String(v??'').replace(/"/g,'""')}"`;dl(b+'.csv','\ufeff'+[k.map(e).join(';'),...r.map(o=>k.map(x=>e(o[x])).join(';'))].join('\n'),'text/csv')}
+ if(f=='pdf')pdf(b)}
+function pdf(b){const {jsPDF}=window.jspdf,d=new jsPDF('p','pt','a4'),W=d.internal.pageSize.getWidth(),H=d.internal.pageSize.getHeight(),m=40,cv=document.createElement('canvas');
+ cv.width=cv.height=300;cv.getContext('2d').drawImage($('.lg'),0,0,300,300);
+ const old=Chart.defaults.color,all=Object.values(Chart.instances);Chart.defaults.color='#334155';window.__bg='#fff';all.forEach(c=>c.update('none'));
+ const pics=cur.charts.map(([id,t])=>{const c=Chart.getChart(id).canvas;return[t,c.toDataURL('image/png'),c.height/c.width]});
+ Chart.defaults.color=old;window.__bg=null;all.forEach(c=>c.update('none'));
+ d.addImage(cv.toDataURL('image/png'),'PNG',m,20,54,54);d.setFont('helvetica','bold');d.setFontSize(20);d.setTextColor(11,77,179);d.text('Luvia Data',m+64,46);
+ d.setFont('helvetica','normal');d.setFontSize(10);d.setTextColor(100);d.text('Rapport analytique - '+P[S.page].t,m+64,62);
+ d.text(`Période : du ${$('#f').value} au ${$('#t').value}`,W-m,44,{align:'right'});d.text('Généré le '+new Date().toLocaleDateString('fr-FR'),W-m,60,{align:'right'});
+ d.setDrawColor(11,77,179);d.setLineWidth(2);d.line(m,84,W-m,84);let y=104;
+ const k=cur.kpis||[],w=(W-2*m-30)/4;
+ k.slice(0,8).forEach(([l,v],i)=>{const x=m+(i%4)*(w+10),yy=y+Math.floor(i/4)*64;d.setFillColor(236,242,252);d.roundedRect(x,yy,w,54,6,6,'F');d.setTextColor(100);d.setFont('helvetica','normal');d.setFontSize(8);d.text(pf(l),x+10,yy+18);d.setTextColor(14,26,51);d.setFont('helvetica','bold');d.setFontSize(13);d.text(pf(v),x+10,yy+40)});
+ y+=Math.ceil(Math.min(k.length,8)/4)*64+14;
+ pics.forEach(([t,u,r])=>{let wi=W-2*m,h=wi*r;if(h>240){h=240;wi=h/r}if(y+h+30>H-40){d.addPage();y=40}
+  d.setFont('helvetica','bold');d.setFontSize(11);d.setTextColor(14,26,51);d.text(pf(t),m,y);d.addImage(u,'PNG',m+(W-2*m-wi)/2,y+8,wi,h);y+=h+34});
+ const r=cur.rows||[];
+ if(r.length){const ks=Object.keys(r[0]);if(y>H-120){d.addPage();y=40}
+  d.autoTable({startY:y,head:[ks.map(x=>x.replace(/_/g,' '))],body:r.map(o=>ks.map(x=>pf(typeof o[x]==='number'?fx(o[x],Number.isInteger(o[x])?0:2):o[x]))),styles:{fontSize:7.5,cellPadding:4},headStyles:{fillColor:[11,77,179]},alternateRowStyles:{fillColor:[245,248,253]},margin:{left:m,right:m,bottom:40}})}
+ const n=d.getNumberOfPages();for(let i=1;i<=n;i++){d.setPage(i);d.setFontSize(8);d.setTextColor(120);d.text(`Luvia Data - page ${i}/${n}`,W/2,H-20,{align:'center'})}
+ d.save(b+'.pdf')}
+
+/* ---------- Démo (si l’API n’est pas joignable) ---------- */
+function mock(path,b){let s=7;const R=()=>(s=s*16807%2147483647)/2147483647,u=new URL(path,'http://x'),q=u.searchParams,p=u.pathname,F=b?.from||q.get('from'),T=b?.to||q.get('to'),D=[],W=x=>({data:{success:true,data:x}}),
+ H=['New York Marriott Downtown|New York|USA','Omni Berkshire Place|New York|USA','Aloft London Excel|London|UK','Plaza Athénée|Paris|France','Burj Al Arab|Dubai|UAE','Hilton Barcelona|Barcelona|Spain','Park Hyatt|Tokyo|Japan','Sofitel Rome|Rome|Italy','Radisson Casablanca|Casablanca|Morocco','Pullman Istanbul|Istanbul|Turkey'].map(x=>x.split('|')),
+ C=['FR','GB','US','DE','ES','IT','AE','NL','CA','BR','MA','CD','SN','CI','TR','JP','AU','CH'];
+ for(let d=new Date(F);d<=new Date(T);d=new Date(+d+864e5))D.push(iso(d));
+ const o=(k,a)=>D.map((d,i)=>({[k]:+a[i].toFixed(2),currency:'EUR',date:d+'T00:00:00.000Z'})),sa=D.map(()=>30000+R()*26000);
+ if(p=='/analytics/report')return W({sales:o('sales',sa),commission:o('commission',sa.map(x=>x*.09)),revenue:o('revenue',sa.map(x=>x*.1)),bookings:D.map((d,i)=>({date:d,booking:Math.round(sa[i]/290)})),cancelled_booking:D.filter(()=>R()<.2).map(d=>({date:d,cancelled_booking:1+(R()*3|0)}))});
+ if(p=='/analytics/weekly')return W({arr:D.filter((_,i)=>i%7==0).map((_,i)=>({weeks:'week '+(i+1),sales:Math.round(220000+R()*120000)}))});
+ if(p=='/analytics/hotels')return W(H.map((h,i)=>({hotel_id:'lp'+(1e3+i),name:h[0],city:h[1],country:h[2],total:Math.round(1100/(i+1)*(.8+R()*.4)),sales:String(Math.round(290000/(i+1)*(.8+R()*.4))),currency:'EUR'})));
+ if(p=='/commissions/report')return W(D.map((d,i)=>({date:d,amount:+(sa[i]*.09).toFixed(2),percentage:+(8+R()*4).toFixed(2)})));
+ if(p=='/bookings/guest-nationality-report'||p=='/bookings/source-markets-report'){const k=p.includes('guest')?'nationality':'country',data=C.map((c,i)=>{const sl=2e5/(i+1)*(.7+R()*.6),bk=Math.round(sl/520);return{[k]:c,current_period:{booking_count:bk,hotel_count:Math.max(1,bk/3|0),total_sales_usd:+sl.toFixed(2),avg_booking_value_usd:+(sl/bk).toFixed(2)},change:{sales_change_percent:+(R()*60-20).toFixed(1)}}});
+  return{summary:{current_period_total_sales_usd:data.reduce((a,x)=>a+x.current_period.total_sales_usd,0),total_sales_change_percent:12.4,total_countries:C.length},data}}
+ if(p=='/bookings/hotels-sales-report')return{data:H.map((h,i)=>{const sl=3e5/(i+1)*(.7+R()*.6),pr=sl*(.07+R()*.07);return{hotel_name:h[0],total_sales_usd:+sl.toFixed(2),total_buying_price_usd:+(sl-pr).toFixed(2),total_profit_usd:+pr.toFixed(2),profit_margin_percent:+(pr/sl*100).toFixed(2),change:{sales_change_percent:+(R()*50-15).toFixed(1)}}})};
+ const G=['John Doe','Awa Diallo','Marie Dupont','Chris Mbala','Sara Khan','Luc Martin'],a=Array.from({length:40},(_,i)=>{const g=G[i%6].split(' ');return{booking_id:'LP'+(1e5+i*37),first_name:g[0],last_name:g[1],hotel_name:H[i%10][0],created_at:new Date(Date.now()-i*17e7).toISOString(),credit_line_billing:i%3?null:{amount_usd:+(300+R()*400).toFixed(2)}}})
+ .filter(x=>JSON.stringify(x).toLowerCase().includes((b?.query||'').toLowerCase())).slice((b?.page||0)*20,(b?.page||0)*20+20);
+ return{success:true,data:a,page:b?.page||0,rowsPerPage:20,query:b?.query}}
+
+/* ---------- Démarrage ---------- */
+function boot(){
+ $('#nv').innerHTML=Object.entries(P).map(([k,p])=>`<button class=nav data-p=${k}><svg viewBox="0 0 24 24"><path d="${p.i}"/></svg><span class=t>${p.t}</span></button>`).join('');
+ $('#nv').onclick=e=>{const b=e.target.closest('[data-p]');if(b){S.page=b.dataset.p;go()}};
+ const th=()=>{const d=document.documentElement.dataset.theme;$('#th').textContent=d=='dark'?'☀ Clair':'☾ Sombre';Chart.defaults.color=getComputedStyle(document.documentElement).getPropertyValue('--mu').trim()};
+ document.documentElement.dataset.theme=ls('th')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');th();
+ $('#th').onclick=()=>{const d=document.documentElement.dataset;d.theme=d.theme=='dark'?'light':'dark';ls('th',d.theme);th();go()};
+ if(ls('col')=='1'||innerWidth<900)document.body.classList.add('col');
+ $('#tg').onclick=()=>ls('col',document.body.classList.toggle('col')?'1':'0');
+ const setR=n=>{$('#t').value=iso(new Date());$('#f').value=iso(new Date(Date.now()-(n-1)*864e5))};setR(30);
+ $('#pr').onchange=e=>{setR(+e.target.value);go()};['#f','#t','#sb'].forEach(x=>$(x).onchange=go);
+ document.querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>ex(b.dataset.x));go()}
+$('#lf').onsubmit=e=>{e.preventDefault();const c=$('#cd').value.trim().toUpperCase();
+ if(c==CODE){S.code=c;try{sessionStorage.luv=c}catch{}$('#lgn').hidden=true;boot()}else $('#er').textContent='Code invalide'};
+try{if(sessionStorage.luv==CODE){S.code=CODE;$('#lgn').hidden=true;boot()}}catch{}
+</script></body></html>
