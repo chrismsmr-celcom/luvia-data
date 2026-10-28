@@ -1,138 +1,166 @@
-<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Luvia Data</title><link rel="icon" href="logo.png">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Luvia Data</title><link rel="icon" href="logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,600..800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
-:root{--bg:#f3f6fc;--card:#fff;--tx:#0e1a33;--mu:#62718f;--bd:#e0e7f3;--br:#0b4db3;--ok:#16a34a;--ko:#dc2626;--sh:0 1px 2px rgba(11,77,179,.06),0 10px 30px rgba(11,77,179,.06)}
-[data-theme=dark]{--bg:#091226;--card:#10192f;--tx:#e8eefb;--mu:#8d9bbb;--bd:#223256;--br:#4f8cff;--sh:none}
+:root{--bg:#eff4fa;--pn:#fff;--tx:#0a1b3d;--mu:#5d6f91;--ln:#dce5f1;--br:#0b4db3;--br2:#2f7bff;--ac:#ff9f43;--ok:#0f9d58;--ko:#d93025;--nv:#061737;--fd:'Bricolage Grotesque',system-ui,sans-serif;color-scheme:light}
+[data-theme=dark]{--bg:#050d1f;--pn:#0b1630;--tx:#e8eefc;--mu:#8a9bbd;--ln:#18284a;--br:#4d8dff;--nv:#030a18;color-scheme:dark}
 *{box-sizing:border-box;margin:0}[hidden]{display:none!important}
-body{font:14px/1.5 'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx)}
+body{font:14px/1.55 'Figtree',system-ui,sans-serif;background:var(--bg);color:var(--tx);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+:focus-visible{outline:2px solid var(--br2);outline-offset:2px}
 .app{display:flex}
-aside{width:248px;flex:none;height:100vh;position:sticky;top:0;background:var(--card);border-right:1px solid var(--bd);padding:16px 12px;display:flex;flex-direction:column;gap:6px;transition:width .25s;overflow:hidden;z-index:5}
-body.col aside{width:76px}body.col .t{display:none}
-.brand{display:flex;align-items:center;gap:10px;padding:2px 6px 16px;font-weight:800;font-size:18px;white-space:nowrap}
-.lg{width:44px;height:44px;object-fit:contain;flex:none}[data-theme=dark] .lg{filter:brightness(0) invert(1)}
-.nav{display:flex;align-items:center;gap:12px;padding:10px 14px;border:0;background:none;color:var(--mu);border-radius:12px;font:inherit;font-weight:600;cursor:pointer;white-space:nowrap;width:100%}
-.nav:hover{background:var(--bg);color:var(--tx)}.nav.on{background:var(--br);color:#fff}
-.nav svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+aside{width:256px;flex:none;height:100vh;position:sticky;top:0;background:radial-gradient(120% 50% at 0 0,#0d3a8f66,transparent 70%),var(--nv);padding:20px 14px;display:flex;flex-direction:column;gap:4px;transition:width .25s;overflow:hidden;z-index:5}
+body.col aside{width:84px}body.col .t{display:none}body.col .brand{justify-content:center;padding-inline:0}body.col .nav{justify-content:center;padding:13px 0}
+.brand{display:flex;align-items:center;gap:12px;padding:4px 8px 22px;font:800 21px var(--fd);font-stretch:85%;letter-spacing:-.01em;color:#fff;white-space:nowrap}
+.lg{width:46px;height:46px;object-fit:contain;flex:none;filter:brightness(0) invert(1)}
+.nav{position:relative;display:flex;align-items:center;gap:13px;padding:11px 14px;border:0;background:none;color:rgba(255,255,255,.62);border-radius:12px;font:inherit;font-weight:600;cursor:pointer;white-space:nowrap;width:100%;transition:background .15s,color .15s}
+.nav:hover{background:rgba(255,255,255,.07);color:#fff}.nav.on{background:rgba(255,255,255,.12);color:#fff}
+.nav.on::before{content:"";position:absolute;left:-14px;top:9px;bottom:9px;width:4px;border-radius:0 4px 4px 0;background:var(--ac)}
+.nav svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ft{margin-top:auto;padding:12px 10px 0;font-size:12px;color:rgba(255,255,255,.4)}
 main{flex:1;min-width:0}
-header{position:sticky;top:0;z-index:4;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 24px;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd)}
-h1{font-size:21px;font-weight:800;margin-right:auto}
-.btn,input,select{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:7px 11px}
-.btn{cursor:pointer;font-weight:600}.btn:hover:not(:disabled){border-color:var(--br)}.btn:disabled{opacity:.4}
-.pri{background:var(--br);color:#fff;border-color:var(--br)}
-#v{padding:24px;display:grid;gap:18px}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px;box-shadow:var(--sh)}
-.card h3{font-size:14px;margin-bottom:12px}
-.kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
-.k span{color:var(--mu);font-size:12px;font-weight:600}.k b{display:block;font-size:26px;font-weight:800;margin:2px 0;letter-spacing:-.5px}
+header{position:sticky;top:0;z-index:4;display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:16px 32px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--ln)}
+h1{font:800 30px/1.1 var(--fd);font-stretch:88%;letter-spacing:-.02em;margin:0 auto 0 6px}
+.btn,input,select{font:inherit;color:var(--tx);background:var(--pn);border:1px solid var(--ln);border-radius:12px;padding:8px 13px}
+.btn{cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:border-color .15s}
+.btn:hover:not(:disabled){border-color:var(--br2)}.btn:disabled{opacity:.4;cursor:default}
+.pri{background:#0b4db3;color:#fff;border-color:#0b4db3}
+#tg{padding:9px}#tg svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.ctl{display:flex;align-items:center;background:var(--pn);border:1px solid var(--ln);border-radius:12px;padding:2px}
+.ctl select,.ctl input{border:0;background:transparent;padding:6px 9px;border-radius:9px}.ctl i{width:1px;height:20px;background:var(--ln);margin:0 2px}
+.seg{display:flex;border:1px solid var(--ln);border-radius:12px;overflow:hidden}.seg .btn{border:0;border-radius:0;padding:8px 14px}.seg .btn+.btn{border-left:1px solid var(--ln)}
+#v{max-width:1440px;margin:0 auto;padding:28px 32px 64px;display:grid;gap:22px}
+.card{background:var(--pn);border:1px solid var(--ln);border-radius:20px;padding:22px}
+.card h3{font:700 16px/1.2 var(--fd);font-stretch:92%;letter-spacing:-.01em;margin-bottom:16px}
+.kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:var(--ln);border:1px solid var(--ln);border-radius:22px;overflow:hidden}
+.kg .card{border:0;border-radius:0;padding:24px 26px}
+.k span{color:var(--mu);font-size:13px;font-weight:600}
+.k b{display:block;font:700 32px/1.1 var(--fd);font-stretch:90%;letter-spacing:-.02em;margin:8px 0 6px}
+.kg .k:first-child{background:linear-gradient(135deg,#0d55c9,#06306f)}
+.kg .k:first-child span,.kg .k:first-child small{color:rgba(255,255,255,.72)}
+.kg .k:first-child b{color:#fff;font-size:38px}.kg .k:first-child .up{color:#8ef0b8}.kg .k:first-child .down{color:#ffb4ab}
 .up{color:var(--ok)}.down{color:var(--ko)}small{font-size:12px;color:var(--mu)}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.cv{position:relative}.tw{max-height:420px;overflow:auto}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.cv{position:relative}.tw{max-height:440px;overflow:auto;margin:0 -8px}
 table{width:100%;border-collapse:collapse;font-size:13px}
-th{position:sticky;top:0;background:var(--card);text-align:left;color:var(--mu);font-size:12px;text-transform:capitalize}
-th,td{padding:9px 10px;border-bottom:1px solid var(--bd);white-space:nowrap}
-#map{height:420px;border-radius:12px;z-index:1}.ld{padding:60px;text-align:center;color:var(--mu)}
-#demo{background:#f59e0b22;color:#b45309;border:1px solid #f59e0b66;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700}
-#lgn{position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:linear-gradient(135deg,#0b4db3,#071b44)}
-#lgn .card{width:340px;text-align:center;display:grid;gap:12px}
+th{position:sticky;top:0;background:var(--pn);text-align:left;color:var(--mu);font-size:12px;font-weight:600;text-transform:capitalize}
+th,td{padding:11px 14px;border-bottom:1px solid var(--ln);white-space:nowrap}
+td:first-child{font-weight:600}tbody tr:hover td{background:color-mix(in srgb,var(--br2) 7%,transparent)}tbody tr:last-child td{border-bottom:0}
+#map{height:440px;border-radius:14px;z-index:1;border:1px solid var(--ln)}.leaflet-popup-content-wrapper{border-radius:12px}
+.ld{display:grid;place-items:center;padding:80px 0;color:var(--mu)}
+.ldg{gap:16px}.ldg::before{content:"";width:34px;height:34px;border-radius:50%;border:3px solid var(--ln);border-top-color:var(--br2);animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+#demo{display:inline-flex;align-items:center;gap:7px;background:color-mix(in srgb,var(--ac) 16%,transparent);color:#a85a05;border:1px solid color-mix(in srgb,var(--ac) 55%,transparent);border-radius:99px;padding:3px 12px;font-size:12px;font-weight:700}
+#demo::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ac)}[data-theme=dark] #demo{color:#ffc27d}
 [data-theme=dark] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.95) contrast(.9)}
-@media(max-width:900px){.g2{grid-template-columns:1fr}header{padding:10px 14px}#v{padding:14px}}
+#lgn{position:fixed;inset:0;z-index:99;display:grid;grid-template-columns:1.1fr 1fr;background:var(--bg)}
+.lv{position:relative;overflow:hidden;color:#fff;display:flex;flex-direction:column;justify-content:space-between;padding:48px 56px;background:radial-gradient(90% 70% at 20% 10%,#1259d1 0,#0a2f78 45%,#051534 100%)}
+.lv>:not(svg){position:relative;z-index:1}.lv svg{position:absolute;inset:0;width:100%;height:100%}.lv .lg{width:88px;height:88px}
+.lv h2{font:800 clamp(34px,4.4vw,60px)/1.02 var(--fd);font-stretch:85%;letter-spacing:-.025em;max-width:11em}
+.lv p{margin-top:18px;max-width:28em;color:rgba(255,255,255,.74);font-size:16px}.lv small{color:rgba(255,255,255,.5)}
+.arc{fill:none;stroke:rgba(255,255,255,.55);stroke-width:1.6;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:dr 2.2s cubic-bezier(.4,0,.2,1) forwards}
+.arc:nth-of-type(2){animation-delay:.4s}.arc:nth-of-type(3){animation-delay:.8s}.arc:nth-of-type(4){animation-delay:1.1s}@keyframes dr{to{stroke-dashoffset:0}}
+.lr{display:grid;place-items:center;padding:40px}
+#lf{width:min(380px,100%);display:grid;gap:14px}#lf h3{font:800 32px/1.1 var(--fd);font-stretch:88%;letter-spacing:-.02em}#lf p{color:var(--mu)}
+#lf input{height:54px;font-size:17px;letter-spacing:.06em;padding:0 16px}#lf .btn{height:54px;justify-content:center;font-size:15px}
+@media(max-width:900px){.g2{grid-template-columns:1fr}header{padding:12px 16px}#v{padding:18px 16px 48px}#lgn{grid-template-columns:1fr;grid-template-rows:auto 1fr}.lv{padding:28px;min-height:240px}.lv p{display:none}.lv h2{font-size:30px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.arc{stroke-dashoffset:0!important}}
 </style></head><body>
-<div id=lgn><form class=card id=lf><img class=lg src=logo.png alt="" style="width:96px;height:96px;margin:auto"><h2>Luvia Data</h2><small>Accès réservé à l’équipe Luvia</small><input id=cd placeholder="Code d’accès" autocomplete=off><button class="btn pri">Entrer</button><small id=er class=down></small></form></div>
-<div class=app><aside><div class=brand><img class=lg src=logo.png alt=""><span class=t>Luvia Data</span></div><nav id=nv></nav></aside>
-<main><header><button class=btn id=tg title="Réduire le menu">☰</button><h1 id=ttl></h1><span id=demo hidden>Mode démo</span>
-<select id=pr><option value=7>7 jours</option><option value=30 selected>30 jours</option><option value=90>90 jours</option><option value=365>12 mois</option></select>
-<input type=date id=f><input type=date id=t><select id=sb><option value=false>Production</option><option value=true>Sandbox</option></select>
-<button class=btn id=th></button><button class=btn data-x=json>JSON</button><button class=btn data-x=csv>CSV</button><button class="btn pri" data-x=pdf>PDF</button></header><div id=v></div></main></div>
+<div id=lgn><section class=lv><svg viewBox="0 0 800 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><pattern id=dt width=26 height=26 patternUnits=userSpaceOnUse><circle cx=2 cy=2 r=1.2 fill="#fff" opacity=".13"/></pattern></defs><rect width=800 height=900 fill="url(#dt)"/><path class=arc pathLength=1 d="M140 700Q290 380 520 330"/><path class=arc pathLength=1 d="M520 330Q700 330 690 580"/><path class=arc pathLength=1 d="M140 700Q440 860 690 580"/><path class=arc pathLength=1 d="M300 200Q440 200 520 330"/><g fill="#fff"><circle cx=140 cy=700 r=5 /><circle cx=520 cy=330 r=5 /><circle cx=690 cy=580 r=5 /><circle cx=300 cy=200 r=5 /></g><g fill="none" stroke="#fff" stroke-opacity=".4"><circle cx=520 cy=330 r=13 /><circle cx=140 cy=700 r=13 /></g></svg>
+<img class=lg src=logo.png alt="Luvia Place"><div><h2>Your sales, your markets, and your margins. All in one place.</h2><p>The Luvia Place dashboard, powered by your LiteAPI account.</p></div><small>Luvia Place</small></section>
+<section class=lr><form id=lf><h3>Team access</h3><p>Enter your code to open the dashboard.</p><input id=cd placeholder="Access code" autocomplete=off aria-label="Access code"><button class="btn pri">Open the dashboard</button><small id=er class=down></small></form></section></div>
+<div class=app><aside><div class=brand><img class=lg src=logo.png alt=""><span class=t>Luvia Data</span></div><nav id=nv></nav><div class="ft t">Powered by LiteAPI</div></aside>
+<main><header><button class=btn id=tg title="Collapse menu" aria-label="Collapse menu"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><h1 id=ttl></h1><span id=demo hidden>Demo mode</span>
+<div class=ctl><select id=pr><option value=7>7 days</option><option value=30 selected>30 days</option><option value=90>90 days</option><option value=365>12 months</option></select><i></i><input type=date id=f><i></i><input type=date id=t><i></i><select id=sb><option value=false>Production</option><option value=true>Sandbox</option></select></div>
+<button class=btn id=th></button><div class=seg><button class=btn data-x=json>JSON</button><button class=btn data-x=csv>CSV</button><button class="btn pri" data-x=pdf>PDF</button></div></header><div id=v></div></main></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script>
-const $=s=>document.querySelector(s),N=x=>+x||0,fx=(n,d=0)=>N(n).toLocaleString('fr-FR',{maximumFractionDigits:d,minimumFractionDigits:d}),
-mo=(n,c='EUR')=>new Intl.NumberFormat('fr-FR',{style:'currency',currency:c||'EUR',maximumFractionDigits:0}).format(N(n)),
+const $=s=>document.querySelector(s),N=x=>+x||0,fx=(n,d=0)=>N(n).toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d}),
+mo=(n,c='EUR')=>new Intl.NumberFormat('en-US',{style:'currency',currency:c||'EUR',maximumFractionDigits:0}).format(N(n)),
 iso=d=>d.toISOString().slice(0,10),un=x=>{for(let i=0;i<2&&x&&!Array.isArray(x)&&x.data!==undefined;i++)x=x.data;return x},
-nm=c=>{try{return new Intl.DisplayNames(['fr'],{type:'region'}).of(c)}catch{return c}},
-pc=p=>p==null?'':`<small class="${p>=0?'up':'down'}">${p>=0?'▲':'▼'} ${fx(Math.abs(p),1)} % vs période précédente</small>`,
+nm=c=>{try{return new Intl.DisplayNames(['en'],{type:'region'}).of(c)}catch{return c}},
+pc=p=>p==null?'':`<small class="${p>=0?'up':'down'}">${p>=0?'▲':'▼'} ${fx(Math.abs(p),1)} % vs previous period</small>`,
 B=()=>({from:$('#f').value,to:$('#t').value}),qs=()=>`from=${$('#f').value}&to=${$('#t').value}&sandbox=${$('#sb').value}`,
 ls=(k,v)=>{try{return v===undefined?localStorage[k]:localStorage[k]=v}catch{}};
 const S={page:'overview',code:'',demo:false,q:''};let cur={},map,CC;
 const CODE='LUV-7858';
 
-/* ---------- API (proxy Vercel /api/liteapi, repli démo) ---------- */
+/* ---------- API (Vercel proxy /api/liteapi, demo fallback) ---------- */
 async function api(path,body){
  try{const r=await fetch('/api/liteapi?path='+encodeURIComponent(path),{method:body?'POST':'GET',headers:{'Content-Type':'application/json','x-access':S.code},body:body?JSON.stringify(body):undefined});
   if(!r.ok)throw new Error(r.status);const j=await r.json();if(j.error)throw new Error(j.error);return j}
- catch(e){console.warn('API indisponible → démo',path,e.message);S.demo=true;return mock(path,body)}}
+ catch(e){console.warn('API unavailable → demo',path,e.message);S.demo=true;return mock(path,body)}}
 
-/* ---------- Briques UI ---------- */
+/* ---------- UI blocks ---------- */
 const kg=k=>(cur.kpis=k.map(x=>x.slice(0,2)),`<div class=kg>${k.map(x=>`<div class="card k"><span>${x[0]}</span><b>${x[1]}</b>${x[2]||''}</div>`).join('')}</div>`),
 cd=(t,id,h=280)=>`<div class=card><h3>${t}</h3><div class=cv style="height:${h}px"><canvas id=${id}></canvas></div></div>`,
-tb=(rows,t='Détail')=>{cur.rows=rows;const k=Object.keys(rows[0]||{});return`<div class=card><h3>${t}</h3><div class=tw><table><thead><tr>${k.map(x=>`<th>${x.replace(/_/g,' ')}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${k.map(x=>`<td>${typeof r[x]==='number'?fx(r[x],Number.isInteger(r[x])?0:2):r[x]??''}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`};
-const PAL=['#3b82f6','#06b6d4','#f59e0b','#10b981','#a78bfa'];
+tb=(rows,t='Details')=>{cur.rows=rows;const k=Object.keys(rows[0]||{});return`<div class=card><h3>${t}</h3><div class=tw><table><thead><tr>${k.map(x=>`<th>${x.replace(/_/g,' ')}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${k.map(x=>`<td>${typeof r[x]==='number'?fx(r[x],Number.isInteger(r[x])?0:2):r[x]??''}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`};
+const PAL=['#2f7bff','#38bdf8','#ff9f43','#14b8a6','#8b7cf6'];Chart.defaults.font.family="'Figtree',system-ui,sans-serif";Chart.defaults.font.size=12;
 Chart.register({id:'bg',afterDraw(c){if(window.__bg){const x=c.ctx;x.save();x.globalCompositeOperation='destination-over';x.fillStyle=window.__bg;x.fillRect(0,0,c.width,c.height);x.restore()}}});
 function ch(id,ti,type,lb,ds,o={}){cur.charts.push([id,ti]);ds.forEach((d,i)=>{d.backgroundColor??=PAL[i%5];d.borderColor??=PAL[i%5]});
- new Chart(document.getElementById(id),{type,data:{labels:lb,datasets:ds},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},elements:{point:{radius:0},line:{tension:.3}},plugins:{legend:{display:ds.length>1,position:'bottom'}},scales:{y:{beginAtZero:true,grid:{color:'rgba(128,128,128,.18)'}},x:{grid:{display:false}}},...o}})}
+ new Chart(document.getElementById(id),{type,data:{labels:lb,datasets:ds},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},elements:{point:{radius:0},line:{tension:.3}},plugins:{legend:{display:ds.length>1,position:'bottom',labels:{usePointStyle:true,boxWidth:8,padding:16}},tooltip:{backgroundColor:'#061737',padding:12,cornerRadius:10,boxPadding:4}},scales:{y:{beginAtZero:true,grid:{color:'rgba(128,128,128,.18)'}},x:{grid:{display:false}}},...o}})}
 async function draw(rows){
  CC??=await fetch('https://restcountries.com/v3.1/all?fields=cca2,latlng').then(r=>r.json()).then(a=>Object.fromEntries(a.map(c=>[c.cca2,c.latlng]))).catch(()=>({}));
  map?.remove();map=L.map('map',{scrollWheelZoom:false}).setView([25,10],2);
  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
  const m=Math.max(...rows.map(r=>r.ventes_usd),1);
- rows.forEach(r=>{const p=CC[r.code];p&&L.circleMarker(p,{radius:6+24*Math.sqrt(r.ventes_usd/m),color:'#0b4db3',fillColor:'#3b82f6',fillOpacity:.55,weight:1.5}).addTo(map).bindPopup(`<b>${r.pays}</b><br>${fx(r.ventes_usd)} USD · ${r.réservations} réservations`)})}
+ rows.forEach(r=>{const p=CC[r.code];p&&L.circleMarker(p,{radius:6+24*Math.sqrt(r.ventes_usd/m),color:'#0b4db3',fillColor:'#3b82f6',fillOpacity:.55,weight:1.5}).addTo(map).bindPopup(`<b>${r.pays}</b><br>${fx(r.ventes_usd)} USD · ${r.réservations} bookings`)})}
 const geo=(path,key,t)=>async el=>{
  const j=await api(path+'?'+qs()),D=Array.isArray(j.data)?j.data:un(j)||[],s=j.summary||{},
  rows=D.map(x=>{const c=x.current_period||{};return{code:x[key],pays:nm(x[key]),réservations:N(c.booking_count),hôtels:N(c.hotel_count),ventes_usd:N(c.total_sales_usd),panier_moyen_usd:N(c.avg_booking_value_usd),évolution_pct:N(x.change?.sales_change_percent)}}).sort((a,b)=>b.ventes_usd-a.ventes_usd),
  tot=rows.reduce((a,r)=>a+r.ventes_usd,0),top=rows.slice(0,10);
- el.innerHTML=kg([['Ventes (USD)',mo(s.current_period_total_sales_usd??tot,'USD'),pc(s.total_sales_change_percent)],['Pays',fx(s.total_countries??rows.length)],['Réservations',fx(rows.reduce((a,r)=>a+r.réservations,0))],['N° 1',top[0]?.pays||'–']])+`<div class=card><h3>Carte des ${t}</h3><div id=map></div></div>`+cd('Top 10 par ventes (USD)','c1',320)+tb(rows,'Détail par pays');
- ch('c1','Top 10 par ventes (USD)','bar',top.map(r=>r.pays),[{label:'Ventes USD',data:top.map(r=>r.ventes_usd),borderRadius:6}]);
+ el.innerHTML=kg([['Sales (USD)',mo(s.current_period_total_sales_usd??tot,'USD'),pc(s.total_sales_change_percent)],['Countries',fx(s.total_countries??rows.length)],['Bookings',fx(rows.reduce((a,r)=>a+r.réservations,0))],['No. 1',top[0]?.pays||'–']])+`<div class=card><h3>Map of ${t}</h3><div id=map></div></div>`+cd('Top 10 by sales (USD)','c1',320)+tb(rows,'Details by country');
+ ch('c1','Top 10 by sales (USD)','bar',top.map(r=>r.pays),[{label:'Sales USD',data:top.map(r=>r.ventes_usd),borderRadius:6}]);
  await draw(rows)};
 
 /* ---------- Pages ---------- */
 const P={
-overview:{t:'Vue d’ensemble',i:'M3 12l9-9 9 9M5 10v10h14V10',async fn(el){
+overview:{t:'Overview',i:'M3 12l9-9 9 9M5 10v10h14V10',async fn(el){
  const [r,w]=await Promise.all([api('/analytics/report',B()),api('/analytics/weekly',B())]),d=un(r)||{},wk=un(w)?.arr||[],by={};
  [['sales','sales','ventes'],['commission','commission','commission'],['revenue','revenue','revenu'],['bookings','booking','réservations'],['cancelled_booking','cancelled_booking','annulations']].forEach(([a,k,f])=>(d[a]||[]).forEach(x=>{const t=x.date.slice(0,10);(by[t]??={date:t,ventes:0,commission:0,revenu:0,réservations:0,annulations:0})[f]=N(x[k])}));
  const rows=Object.values(by).sort((a,b)=>a.date<b.date?-1:1),sm=k=>rows.reduce((s,r)=>s+r[k],0),c=d.sales?.[0]?.currency||'EUR',L=rows.map(r=>r.date.slice(5)),nb=sm('réservations'),an=sm('annulations');
- el.innerHTML=kg([['Ventes',mo(sm('ventes'),c)],['Commissions',mo(sm('commission'),c)],['Revenu',mo(sm('revenu'),c)],['Réservations',fx(nb),`<small>${fx(nb?an/nb*100:0,1)} % d’annulation</small>`]])+`<div class=g2>`+cd('Ventes et commissions par jour','c1')+cd('Réservations par jour','c2')+`</div>`+cd('Ventes par semaine','c3')+tb(rows,'Détail journalier');
- ch('c1','Ventes et commissions par jour','line',L,[{label:'Ventes',data:rows.map(r=>r.ventes),fill:true,backgroundColor:'rgba(59,130,246,.15)'},{label:'Commissions',data:rows.map(r=>r.commission)}]);
- ch('c2','Réservations par jour','bar',L,[{label:'Réservations',data:rows.map(r=>r.réservations),borderRadius:4}]);
- ch('c3','Ventes par semaine','bar',wk.map(x=>x.weeks),[{label:'Ventes',data:wk.map(x=>x.sales),borderRadius:6}])}},
-hotels:{t:'Hôtels',i:'M3 21V7l9-4 9 4v14M9 21v-6h6v6',async fn(el){
- const a=un(await api('/analytics/hotels',B()))||[],rows=a.map((h,i)=>({rang:i+1,hôtel:h.name,ville:h.city,pays:h.country,réservations:N(h.total),ventes:N(h.sales),devise:h.currency})),t=rows.slice(0,10),sm=k=>rows.reduce((s,r)=>s+r[k],0);
- el.innerHTML=kg([['Hôtels classés',fx(rows.length)],['Réservations',fx(sm('réservations'))],['Ventes',mo(sm('ventes'),rows[0]?.devise)]])+`<div class=g2>`+cd('Top 10 – réservations','c1',340)+cd('Top 10 – ventes','c2',340)+`</div>`+tb(rows,'Classement des hôtels');
- ch('c1','Top 10 – réservations','bar',t.map(r=>r.hôtel),[{label:'Réservations',data:t.map(r=>r.réservations),borderRadius:4}],{indexAxis:'y'});
- ch('c2','Top 10 – ventes','bar',t.map(r=>r.hôtel),[{label:'Ventes',data:t.map(r=>r.ventes),borderRadius:4}],{indexAxis:'y'})}},
-markets:{t:'Marchés émetteurs',i:'M12 3a9 9 0 100 18 9 9 0 000-18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',fn:geo('/bookings/guest-nationality-report','nationality','nationalités clients')},
+ el.innerHTML=kg([['Sales',mo(sm('ventes'),c)],['Commissions',mo(sm('commission'),c)],['Revenue',mo(sm('revenu'),c)],['Bookings',fx(nb),`<small>${fx(nb?an/nb*100:0,1)} % cancellation</small>`]])+`<div class=g2>`+cd('Daily sales and commissions','c1')+cd('Daily bookings','c2')+`</div>`+cd('Weekly sales','c3')+tb(rows,'Daily details');
+ ch('c1','Daily sales and commissions','line',L,[{label:'Sales',data:rows.map(r=>r.ventes),fill:true,backgroundColor:'rgba(59,130,246,.15)'},{label:'Commissions',data:rows.map(r=>r.commission)}]);
+ ch('c2','Daily bookings','bar',L,[{label:'Bookings',data:rows.map(r=>r.réservations),borderRadius:4}]);
+ ch('c3','Weekly sales','bar',wk.map(x=>x.weeks),[{label:'Sales',data:wk.map(x=>x.sales),borderRadius:6}])}},
+hotels:{t:'Hotels',i:'M3 21V7l9-4 9 4v14M9 21v-6h6v6',async fn(el){
+ const a=un(await api('/analytics/hotels',B()))||[],rows=a.map((h,i)=>({rank:i+1,hotel:h.name,city:h.city,country:h.country,bookings:N(h.total),sales:N(h.sales),currency:h.currency})),t=rows.slice(0,10),sm=k=>rows.reduce((s,r)=>s+r[k],0);
+ el.innerHTML=kg([['Ranked hotels',fx(rows.length)],['Bookings',fx(sm('bookings'))],['Sales',mo(sm('sales'),rows[0]?.currency)]])+`<div class=g2>`+cd('Top 10 – bookings','c1',340)+cd('Top 10 – sales','c2',340)+`</div>`+tb(rows,'Hotel ranking');
+ ch('c1','Top 10 – bookings','bar',t.map(r=>r.hotel),[{label:'Bookings',data:t.map(r=>r.bookings),borderRadius:4}],{indexAxis:'y'});
+ ch('c2','Top 10 – sales','bar',t.map(r=>r.hotel),[{label:'Sales',data:t.map(r=>r.sales),borderRadius:4}],{indexAxis:'y'})}},
+markets:{t:'Source markets',i:'M12 3a9 9 0 100 18 9 9 0 000-18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',fn:geo('/bookings/guest-nationality-report','nationality','guest nationalities')},
 dest:{t:'Destinations',i:'M12 21s7-6 7-11a7 7 0 10-14 0c0 5 7 11 7 11zM12 12a2 2 0 100-4 2 2 0 000 4',fn:geo('/bookings/source-markets-report','country','destinations')},
-profit:{t:'Rentabilité',i:'M12 3a9 9 0 100 18 9 9 0 000-18zM12 7v10M15 9.5c0-1-1.5-1.5-3-1.5s-3 .7-3 2 1.5 1.7 3 2 3 .7 3 2-1.5 2-3 2-3-.5-3-1.5',async fn(el){
+profit:{t:'Profitability',i:'M12 3a9 9 0 100 18 9 9 0 000-18zM12 7v10M15 9.5c0-1-1.5-1.5-3-1.5s-3 .7-3 2 1.5 1.7 3 2 3 .7 3 2-1.5 2-3 2-3-.5-3-1.5',async fn(el){
  const j=await api('/bookings/hotels-sales-report?'+qs()+'&limit=100'),D=Array.isArray(j.data)?j.data:un(j)||[],
- rows=D.map(x=>{const c=x.current_period||x;return{hôtel:x.hotel_name||x.name||x.hotel_id,ventes_usd:N(c.total_sales_usd),coût_usd:N(c.total_buying_price_usd),profit_usd:N(c.total_profit_usd),marge_pct:N(c.profit_margin_percent),évolution_pct:N(x.change?.sales_change_percent)}}).sort((a,b)=>b.profit_usd-a.profit_usd),
+ rows=D.map(x=>{const c=x.current_period||x;return{hotel:x.hotel_name||x.name||x.hotel_id,ventes_usd:N(c.total_sales_usd),coût_usd:N(c.total_buying_price_usd),profit_usd:N(c.total_profit_usd),marge_pct:N(c.profit_margin_percent),évolution_pct:N(x.change?.sales_change_percent)}}).sort((a,b)=>b.profit_usd-a.profit_usd),
  sm=k=>rows.reduce((s,r)=>s+r[k],0),top=rows.slice(0,10);
- el.innerHTML=kg([['Ventes',mo(sm('ventes_usd'),'USD')],['Profit',mo(sm('profit_usd'),'USD')],['Marge moyenne',fx(sm('ventes_usd')?sm('profit_usd')/sm('ventes_usd')*100:0,1)+' %'],['Établissements',fx(rows.length)]])+cd('Top 10 – ventes et profit (USD)','c1',340)+tb(rows,'Performance par établissement');
- ch('c1','Top 10 – ventes et profit (USD)','bar',top.map(r=>r.hôtel),[{label:'Ventes',data:top.map(r=>r.ventes_usd),borderRadius:4},{label:'Profit',data:top.map(r=>r.profit_usd),borderRadius:4}])}},
+ el.innerHTML=kg([['Sales',mo(sm('ventes_usd'),'USD')],['Profit',mo(sm('profit_usd'),'USD')],['Average margin',fx(sm('ventes_usd')?sm('profit_usd')/sm('ventes_usd')*100:0,1)+' %'],['Properties',fx(rows.length)]])+cd('Top 10 – sales and profit (USD)','c1',340)+tb(rows,'Performance by property');
+ ch('c1','Top 10 – sales and profit (USD)','bar',top.map(r=>r.hotel),[{label:'Sales',data:top.map(r=>r.ventes_usd),borderRadius:4},{label:'Profit',data:top.map(r=>r.profit_usd),borderRadius:4}])}},
 comm:{t:'Commissions',i:'M19 5L5 19M7 9a2 2 0 100-4 2 2 0 000 4zM17 19a2 2 0 100-4 2 2 0 000 4z',async fn(el){
  const a=un(await api('/commissions/report',{...B(),sandbox:$('#sb').value}))||[],rows=a.map(x=>({date:x.date,montant:N(x.amount),pourcentage:N(x.percentage)})),tot=rows.reduce((s,r)=>s+r.montant,0),best=rows.reduce((m,r)=>r.montant>(m?.montant||0)?r:m,null);
- el.innerHTML=kg([['Commissions',fx(tot)],['Taux moyen',fx(rows.length?rows.reduce((s,r)=>s+r.pourcentage,0)/rows.length:0,2)+' %'],['Meilleur jour',best?fx(best.montant):'–',`<small>${best?.date||''}</small>`]])+cd('Montant quotidien et taux moyen','c1',320)+tb(rows,'Détail journalier');
- ch('c1','Montant quotidien et taux moyen','bar',rows.map(r=>r.date.slice(5)),[{label:'Montant',data:rows.map(r=>r.montant),borderRadius:4,yAxisID:'y'},{type:'line',label:'Taux %',data:rows.map(r=>r.pourcentage),yAxisID:'y1',borderColor:'#f59e0b',backgroundColor:'#f59e0b'}],{scales:{x:{grid:{display:false}},y:{beginAtZero:true,grid:{color:'rgba(128,128,128,.18)'}},y1:{position:'right',grid:{drawOnChartArea:false}}}})}},
-book:{t:'Réservations',i:'M11 19a8 8 0 100-16 8 8 0 000 16zM21 21l-4.3-4.3',async fn(el){
- el.innerHTML=`<div class=card><form id=sf style="display:flex;gap:10px"><input id=q placeholder="Nom du client, hôtel ou numéro de réservation" style="flex:1" value="${S.q}"><button class="btn pri">Rechercher</button></form></div><div id=bb></div>`;
+ el.innerHTML=kg([['Commissions',fx(tot)],['Average rate',fx(rows.length?rows.reduce((s,r)=>s+r.pourcentage,0)/rows.length:0,2)+' %'],['Best day',best?fx(best.montant):'–',`<small>${best?.date||''}</small>`]])+cd('Daily amount and average rate','c1',320)+tb(rows,'Daily details');
+ ch('c1','Daily amount and average rate','bar',rows.map(r=>r.date.slice(5)),[{label:'Amount',data:rows.map(r=>r.montant),borderRadius:4,yAxisID:'y'},{type:'line',label:'Rate %',data:rows.map(r=>r.pourcentage),yAxisID:'y1',borderColor:'#f59e0b',backgroundColor:'#f59e0b'}],{scales:{x:{grid:{display:false}},y:{beginAtZero:true,grid:{color:'rgba(128,128,128,.18)'}},y1:{position:'right',grid:{drawOnChartArea:false}}}})}},
+book:{t:'Bookings',i:'M11 19a8 8 0 100-16 8 8 0 000 16zM21 21l-4.3-4.3',async fn(el){
+ el.innerHTML=`<div class=card><form id=sf style="display:flex;gap:10px"><input id=q placeholder="Guest name, hotel, or booking number" style="flex:1" value="${S.q}"><button class="btn pri">Search</button></form></div><div id=bb></div>`;
  const run=async(pg=0)=>{S.q=$('#q').value.trim();cur.kpis=[];cur.rows=[];
-  if(!S.q){$('#bb').innerHTML='<div class=ld>Saisissez un nom, un hôtel ou un numéro pour lancer la recherche.</div>';return}
+  if(!S.q){$('#bb').innerHTML='<div class=ld>Enter a name, hotel, or number to start searching.</div>';return}
   const a=un(await api('/bookings/search',{query:S.q,page:pg,rowsPerPage:20,sand_box:$('#sb').value}))||[],
-  rows=a.map(x=>({réservation:x.booking_id,client:`${x.first_name||''} ${x.last_name||''}`.trim(),hôtel:x.hotel_name,créée_le:(x.created_at||'').slice(0,10),facturé_usd:x.credit_line_billing?.amount_usd??''}));
-  $('#bb').innerHTML=tb(rows,`Résultats – page ${pg+1}`)+`<div style="display:flex;gap:10px;justify-content:center;margin-top:14px"><button class=btn id=pv ${pg?'':'disabled'}>← Précédent</button><button class=btn id=nx ${a.length<20?'disabled':''}>Suivant →</button></div>`;
+  rows=a.map(x=>({booking:x.booking_id,guest:`${x.first_name||''} ${x.last_name||''}`.trim(),hotel:x.hotel_name,created_on:(x.created_at||'').slice(0,10),billed_usd:x.credit_line_billing?.amount_usd??''}));
+  $('#bb').innerHTML=tb(rows,`Results – page ${pg+1}`)+`<div style="display:flex;gap:10px;justify-content:center;margin-top:14px"><button class=btn id=pv ${pg?'':'disabled'}>← Previous</button><button class=btn id=nx ${a.length<20?'disabled':''}>Next →</button></div>`;
   $('#pv').onclick=()=>run(pg-1);$('#nx').onclick=()=>run(pg+1);$('#demo').hidden=!S.demo};
  $('#sf').onsubmit=e=>{e.preventDefault();run()};await run()}}};
 
-async function go(){const el=$('#v');Object.values(Chart.instances).forEach(c=>c.destroy());el.innerHTML='<div class=ld>Chargement…</div>';cur={charts:[]};S.demo=false;
+async function go(){const el=$('#v');Object.values(Chart.instances).forEach(c=>c.destroy());el.innerHTML='<div class="ld ldg">Loading…</div>';cur={charts:[]};S.demo=false;
  document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('on',b.dataset.p==S.page));$('#ttl').textContent=P[S.page].t;
- try{await P[S.page].fn(el)}catch(e){console.error(e);el.innerHTML=`<div class=card>Erreur : ${e.message}</div>`}
+ try{await P[S.page].fn(el)}catch(e){console.error(e);el.innerHTML=`<div class=card>Error: ${e.message}</div>`}
  $('#demo').hidden=!S.demo}
 
 /* ---------- Exports ---------- */
 const dl=(n,t,m)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:m}));a.download=n;a.click()},pf=v=>String(v??'').replace(/[\u202f\u00a0]/g,' ');
 function ex(f){const b=`luvia-data-${S.page}-${$('#f').value}_${$('#t').value}`,r=cur.rows||[];
- if(f=='json')dl(b+'.json',JSON.stringify({page:P[S.page].t,periode:B(),kpis:cur.kpis,données:r},null,2),'application/json');
+ if(f=='json')dl(b+'.json',JSON.stringify({page:P[S.page].t,period:B(),kpis:cur.kpis,data:r},null,2),'application/json');
  if(f=='csv'){const k=Object.keys(r[0]||{}),e=v=>`"${String(v??'').replace(/"/g,'""')}"`;dl(b+'.csv','\ufeff'+[k.map(e).join(';'),...r.map(o=>k.map(x=>e(o[x])).join(';'))].join('\n'),'text/csv')}
  if(f=='pdf')pdf(b)}
 function pdf(b){const {jsPDF}=window.jspdf,d=new jsPDF('p','pt','a4'),W=d.internal.pageSize.getWidth(),H=d.internal.pageSize.getHeight(),m=40,cv=document.createElement('canvas');
@@ -141,8 +169,8 @@ function pdf(b){const {jsPDF}=window.jspdf,d=new jsPDF('p','pt','a4'),W=d.intern
  const pics=cur.charts.map(([id,t])=>{const c=Chart.getChart(id).canvas;return[t,c.toDataURL('image/png'),c.height/c.width]});
  Chart.defaults.color=old;window.__bg=null;all.forEach(c=>c.update('none'));
  d.addImage(cv.toDataURL('image/png'),'PNG',m,20,54,54);d.setFont('helvetica','bold');d.setFontSize(20);d.setTextColor(11,77,179);d.text('Luvia Data',m+64,46);
- d.setFont('helvetica','normal');d.setFontSize(10);d.setTextColor(100);d.text('Rapport analytique - '+P[S.page].t,m+64,62);
- d.text(`Période : du ${$('#f').value} au ${$('#t').value}`,W-m,44,{align:'right'});d.text('Généré le '+new Date().toLocaleDateString('fr-FR'),W-m,60,{align:'right'});
+ d.setFont('helvetica','normal');d.setFontSize(10);d.setTextColor(100);d.text('Analytics report - '+P[S.page].t,m+64,62);
+ d.text(`Period: from ${$('#f').value} to ${$('#t').value}`,W-m,44,{align:'right'});d.text('Generated on '+new Date().toLocaleDateString('en-US'),W-m,60,{align:'right'});
  d.setDrawColor(11,77,179);d.setLineWidth(2);d.line(m,84,W-m,84);let y=104;
  const k=cur.kpis||[],w=(W-2*m-30)/4;
  k.slice(0,8).forEach(([l,v],i)=>{const x=m+(i%4)*(w+10),yy=y+Math.floor(i/4)*64;d.setFillColor(236,242,252);d.roundedRect(x,yy,w,54,6,6,'F');d.setTextColor(100);d.setFont('helvetica','normal');d.setFontSize(8);d.text(pf(l),x+10,yy+18);d.setTextColor(14,26,51);d.setFont('helvetica','bold');d.setFontSize(13);d.text(pf(v),x+10,yy+40)});
@@ -155,7 +183,7 @@ function pdf(b){const {jsPDF}=window.jspdf,d=new jsPDF('p','pt','a4'),W=d.intern
  const n=d.getNumberOfPages();for(let i=1;i<=n;i++){d.setPage(i);d.setFontSize(8);d.setTextColor(120);d.text(`Luvia Data - page ${i}/${n}`,W/2,H-20,{align:'center'})}
  d.save(b+'.pdf')}
 
-/* ---------- Démo (si l’API n’est pas joignable) ---------- */
+/* ---------- Demo (if API is unreachable) ---------- */
 function mock(path,b){let s=7;const R=()=>(s=s*16807%2147483647)/2147483647,u=new URL(path,'http://x'),q=u.searchParams,p=u.pathname,F=b?.from||q.get('from'),T=b?.to||q.get('to'),D=[],W=x=>({data:{success:true,data:x}}),
  H=['New York Marriott Downtown|New York|USA','Omni Berkshire Place|New York|USA','Aloft London Excel|London|UK','Plaza Athénée|Paris|France','Burj Al Arab|Dubai|UAE','Hilton Barcelona|Barcelona|Spain','Park Hyatt|Tokyo|Japan','Sofitel Rome|Rome|Italy','Radisson Casablanca|Casablanca|Morocco','Pullman Istanbul|Istanbul|Turkey'].map(x=>x.split('|')),
  C=['FR','GB','US','DE','ES','IT','AE','NL','CA','BR','MA','CD','SN','CI','TR','JP','AU','CH'];
@@ -172,11 +200,11 @@ function mock(path,b){let s=7;const R=()=>(s=s*16807%2147483647)/2147483647,u=ne
  .filter(x=>JSON.stringify(x).toLowerCase().includes((b?.query||'').toLowerCase())).slice((b?.page||0)*20,(b?.page||0)*20+20);
  return{success:true,data:a,page:b?.page||0,rowsPerPage:20,query:b?.query}}
 
-/* ---------- Démarrage ---------- */
+/* ---------- Startup ---------- */
 function boot(){
  $('#nv').innerHTML=Object.entries(P).map(([k,p])=>`<button class=nav data-p=${k}><svg viewBox="0 0 24 24"><path d="${p.i}"/></svg><span class=t>${p.t}</span></button>`).join('');
  $('#nv').onclick=e=>{const b=e.target.closest('[data-p]');if(b){S.page=b.dataset.p;go()}};
- const th=()=>{const d=document.documentElement.dataset.theme;$('#th').textContent=d=='dark'?'☀ Clair':'☾ Sombre';Chart.defaults.color=getComputedStyle(document.documentElement).getPropertyValue('--mu').trim()};
+ const th=()=>{const d=document.documentElement.dataset.theme;$('#th').textContent=d=='dark'?'☀ Light':'☾ Dark';Chart.defaults.color=getComputedStyle(document.documentElement).getPropertyValue('--mu').trim()};
  document.documentElement.dataset.theme=ls('th')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');th();
  $('#th').onclick=()=>{const d=document.documentElement.dataset;d.theme=d.theme=='dark'?'light':'dark';ls('th',d.theme);th();go()};
  if(ls('col')=='1'||innerWidth<900)document.body.classList.add('col');
@@ -185,6 +213,6 @@ function boot(){
  $('#pr').onchange=e=>{setR(+e.target.value);go()};['#f','#t','#sb'].forEach(x=>$(x).onchange=go);
  document.querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>ex(b.dataset.x));go()}
 $('#lf').onsubmit=e=>{e.preventDefault();const c=$('#cd').value.trim().toUpperCase();
- if(c==CODE){S.code=c;try{sessionStorage.luv=c}catch{}$('#lgn').hidden=true;boot()}else $('#er').textContent='Code invalide'};
+ if(c==CODE){S.code=c;try{sessionStorage.luv=c}catch{}$('#lgn').hidden=true;boot()}else $('#er').textContent='Invalid code'};
 try{if(sessionStorage.luv==CODE){S.code=CODE;$('#lgn').hidden=true;boot()}}catch{}
 </script></body></html>
